@@ -112,6 +112,9 @@ if __name__ == '__main__':
     logging.info(f"Arguments: {args}")
     logging.info(f"The outputs are being saved in {args.output_folder}")
 
+    pil_logger = logging.getLogger('PIL')
+    pil_logger.setLevel(logging.INFO)
+
     #### Model
     model = cosplace_network.GeoLocalizationNet(args.backbone, args.fc_output_dim, args.train_all_layers)
 
