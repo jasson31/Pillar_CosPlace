@@ -7,11 +7,12 @@ import torchvision.transforms as transforms
 from sklearn.neighbors import NearestNeighbors
 
 import datasets.dataset_utils as dataset_utils
+from scipy.spatial.transform import Rotation as R
 
 
 class TestDataset(data.Dataset):
     def __init__(self, dataset_folder, database_folder="database",
-                 queries_folder="queries", positive_dist_threshold=25,
+                 queries_folder="queries", positive_dist_threshold_pos=0.2, positive_dist_threshold_rot=0.5,
                  image_size=512, resize_test_imgs=False):
         self.database_folder = dataset_folder + "/" + database_folder
         self.queries_folder = dataset_folder + "/" + queries_folder
@@ -22,15 +23,26 @@ class TestDataset(data.Dataset):
         
         #### Read paths and UTM coordinates for all images.
         # The format must be path/to/file/@utm_easting@utm_northing@...@.jpg
-        self.database_utms = np.array([(path.split("@")[1], path.split("@")[2]) for path in self.database_paths]).astype(float)
-        self.queries_utms = np.array([(path.split("@")[1], path.split("@")[2]) for path in self.queries_paths]).astype(float)
-        
+        self.database_utms_pos = np.array([(float(path.split("@")[1]) / 100, float(path.split("@")[2]) / 100) for path in self.database_paths]).astype(float)
+        self.queries_utms_pos = np.array([(float(path.split("@")[1]) / 100, float(path.split("@")[2]) / 100) for path in self.queries_paths]).astype(float)
+
+        self.database_utms_rot = np.array([R.from_euler('xyz', (path.split("@")[9], path.split("@")[10], path.split("@")[11].split('.')[0])).as_quat() for path in self.database_paths]).astype(float)
+        self.queries_utms_rot = np.array([R.from_euler('xyz', (path.split("@")[9], path.split("@")[10], path.split("@")[11].split('.')[0])).as_quat() for path in self.queries_paths]).astype(float)
+
         # Find positives_per_query, which are within positive_dist_threshold (default 25 meters)
-        knn = NearestNeighbors(n_jobs=-1)
-        knn.fit(self.database_utms)
-        self.positives_per_query = knn.radius_neighbors(
-            self.queries_utms, radius=positive_dist_threshold, return_distance=False
+        knn_pos = NearestNeighbors(n_jobs=-1)
+        knn_pos.fit(self.database_utms_pos)
+        positives_per_query_pos = knn_pos.radius_neighbors(
+            self.queries_utms_pos, radius=positive_dist_threshold_pos, return_distance=False
         )
+
+        knn_rot = NearestNeighbors(n_jobs=-1)
+        knn_rot.fit(self.database_utms_rot)
+        positives_per_query_rot = knn_rot.radius_neighbors(
+            self.queries_utms_rot, radius=positive_dist_threshold_rot, return_distance=False
+        )
+
+        self.positives_per_query = [a[np.in1d(a, b)] for a, b in zip(positives_per_query_pos, positives_per_query_rot)]
         
         self.images_paths = self.database_paths + self.queries_paths
         

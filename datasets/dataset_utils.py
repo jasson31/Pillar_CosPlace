@@ -40,7 +40,7 @@ def read_images_paths(dataset_folder, get_abs_path=False):
                                     f"that the content of {file_with_paths} is wrong.")
     else:
         logging.debug(f"Searching images in {dataset_folder} with glob()")
-        images_paths = sorted(glob(f"{dataset_folder}/**/*.jpg", recursive=True))
+        images_paths = sorted(glob(f"{dataset_folder}/**/*.png", recursive=True))
         if len(images_paths) == 0:
             raise FileNotFoundError(f"Directory {dataset_folder} does not contain any JPEG images")
     

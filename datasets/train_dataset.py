@@ -4,6 +4,7 @@ import torch
 import random
 import logging
 import numpy as np
+import torchvision.transforms
 from PIL import Image
 from PIL import ImageFile
 import torchvision.transforms as T
@@ -86,6 +87,10 @@ class TrainDataset(torch.utils.data.Dataset):
             raise e
         
         tensor_image = T.functional.to_tensor(pil_image)
+
+        if tensor_image.shape != torch.Size([3, 512, 512]):
+            tensor_image = T.Resize((512, 512))(tensor_image)
+
         assert tensor_image.shape == torch.Size([3, 512, 512]), \
             f"Image {image_path} should have shape [3, 512, 512] but has {tensor_image.shape}."
         
