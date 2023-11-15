@@ -55,6 +55,6 @@ def resume_train(args: Namespace, output_folder: str, model: torch.nn.Module,
     best_val_recall1 = checkpoint["best_val_recall1"]
     
     # Copy best model to current output_folder
-    shutil.copy(args.resume_train.replace("last_checkpoint.pth", "best_model.pth"), output_folder)
+    # shutil.copy(args.resume_train.replace("last_checkpoint.pth", "best_model.pth"), output_folder)
     
     return model, model_optimizer, classifiers, classifiers_optimizers, best_val_recall1, start_epoch_num

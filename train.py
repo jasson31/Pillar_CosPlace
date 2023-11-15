@@ -251,6 +251,8 @@ if __name__ == '__main__':
 
     logging.info(f"Trained for {epoch_num+1:02d} epochs, in total in {str(datetime.now() - start_time)[:-7]}")
 
+    torch.save(model.state_dict(), f"{args.output_folder}/best_model.pth")
+
     #### Test best model on test set v1
     best_model_state_dict = torch.load(f"{args.output_folder}/best_model.pth")
     model.load_state_dict(best_model_state_dict)
