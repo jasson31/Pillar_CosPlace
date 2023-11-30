@@ -24,14 +24,14 @@ import argparse
 def parse_arguments(is_training: bool = True):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     # CosPlace Groups parameters
-    parser.add_argument("--M", type=int, default=5, help="_")
-    parser.add_argument("--alpha", type=int, default=10, help="_")
+    parser.add_argument("--M", type=int, default=30, help="_")
+    parser.add_argument("--alpha", type=int, default=20, help="_")
     parser.add_argument("--N", type=int, default=5, help="_")
     parser.add_argument("--L", type=int, default=2, help="_")
     parser.add_argument("--groups_num", type=int, default=8, help="_")
     parser.add_argument("--min_images_per_class", type=int, default=1, help="_")
     # Model parameters
-    parser.add_argument("--backbone", type=str, default="ResNet18",
+    parser.add_argument("--backbone", type=str, default="ResNet50",
                         choices=["VGG16",
                                  "ResNet18", "ResNet50", "ResNet101", "ResNet152",
                                  "EfficientNet_B0", "EfficientNet_B1", "EfficientNet_B2",

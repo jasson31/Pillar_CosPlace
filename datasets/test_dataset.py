@@ -67,7 +67,7 @@ class TestDataset(data.Dataset):
         image_path = self.images_paths[index]
         pil_img = TestDataset.open_image(image_path)
         normalized_img = self.base_transform(pil_img)
-        return normalized_img, index
+        return normalized_img, index, image_path
     
     def __len__(self):
         return len(self.images_paths)
